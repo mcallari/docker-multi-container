@@ -1,0 +1,23 @@
+sudo: required
+services:
+  - docker
+
+before_install:
+  - docker build -t mikecallari/react-test -f ./client/Dockerfile.dev ./client
+
+script:
+  - docker run mikecallari/react-test npm test -- --coverage
+
+after_sucess:
+  - docker build -t mikecallari/multi-client -f ./client/Dockerfile ./client
+  - docker build -t mikecallari/multi-nginx -f ./client/Dockerfile ./nginx
+  - docker build -t mikecallari/multi-server -f ./server/Dockerfile ./server
+  - docker build -t mikecallari/multi-worker -f ./worker/Dockerfile ./worker
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
+  - docker push mikecallari/multi-client
+  - docker push mikecallari/multi-ngiinx
+  - docker push mikecallari/multi-server
+  - docker push mikecallari/multi-worker
+
+
+
