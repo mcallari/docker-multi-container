@@ -14,6 +14,7 @@ after_sucess:
   - docker build -t mikecallari/multi-server -f ./server/Dockerfile ./server
   - docker build -t mikecallari/multi-worker -f ./worker/Dockerfile ./worker
   - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
+  # Push to docker hub.
   - docker push mikecallari/multi-client
   - docker push mikecallari/multi-ngiinx
   - docker push mikecallari/multi-server
