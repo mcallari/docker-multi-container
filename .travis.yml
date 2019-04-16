@@ -17,7 +17,7 @@ after_success:
   - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
   # Push to docker hub.
   - docker push mikecallari/multi-client
-  - docker push mikecallari/multi-ngiinx
+  - docker push mikecallari/multi-nginx
   - docker push mikecallari/multi-server
   - docker push mikecallari/multi-worker
 
