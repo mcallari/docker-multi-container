@@ -31,15 +31,16 @@ after_success:
   - docker build -t opt/multi-nginx -f ./nginx/Dockerfile ./nginx
   - docker build -t opt/multi-server -f ./server/Dockerfile ./server
   - docker build -t opt/multi-worker -f ./worker/Dockerfile ./worker
-  - docker tag opt/multi-client:latest 669386438505.dkr.ecr.us-east-1.amazonaws.com/opt/multi-client:latest
-  - docker tag opt/multi-nginx:latest 669386438505.dkr.ecr.us-east-1.amazonaws.com/opt/multi-nginx:latest
-  - docker tag opt/multi-server:latest 669386438505.dkr.ecr.us-east-1.amazonaws.com/opt/multi-server:latest
-  - docker tag opt/multi-worker:latest 669386438505.dkr.ecr.us-east-1.amazonaws.com/opt/multi-worker:latest
-  # Push to ACS
-  - docker push 669386438505.dkr.ecr.us-east-1.amazonaws.com/opt/multi-client
-  - docker push 669386438505.dkr.ecr.us-east-1.amazonaws.com/opt/multi-nginx
-  - docker push 669386438505.dkr.ecr.us-east-1.amazonaws.com/opt/multi-server
-  - docker push 669386438505.dkr.ecr.us-east-1.amazonaws.com/opt/multi-worker
+  # Tag for AWS
+  - docker tag opt/multi-client:latest $AWS_ECR_ACCOUNT.dkr.ecr.us-east-1.amazonaws.com/opt/multi-client:latest
+  - docker tag opt/multi-nginx:latest $AWS_ECR_ACCOUNT.dkr.ecr.us-east-1.amazonaws.com/opt/multi-nginx:latest
+  - docker tag opt/multi-server:latest $AWS_ECR_ACCOUNT.dkr.ecr.us-east-1.amazonaws.com/opt/multi-server:latest
+  - docker tag opt/multi-worker:latest $AWS_ECR_ACCOUNT.dkr.ecr.us-east-1.amazonaws.com/opt/multi-worker:latest
+  # Push to AWS/ECR
+  - docker push $AWS_ECR_ACCOUNT.dkr.ecr.us-east-1.amazonaws.com/opt/multi-client
+  - docker push $AWS_ECR_ACCOUNT.dkr.ecr.us-east-1.amazonaws.com/opt/multi-nginx
+  - docker push $AWS_ECR_ACCOUNT.dkr.ecr.us-east-1.amazonaws.com/opt/multi-server
+  - docker push $AWS_ECR_ACCOUNT.dkr.ecr.us-east-1.amazonaws.com/opt/multi-worker
 
 # deploy:
 #   provider: elasticbeanstalk
