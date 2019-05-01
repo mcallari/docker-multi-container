@@ -3,34 +3,46 @@ services:
   - docker
 
 before_install:
-  - docker build -t mikecallari/react-test -f ./client/Dockerfile.dev ./client
+  - docker build -t opt/react-test -f ./client/Dockerfile.dev ./client
 
 script:
-  - docker run mikecallari/react-test npm test -- --coverage
+  - docker run opt/react-test npm test -- --coverage
 
 after_success:
-  - docker build -t mikecallari/multi-client -f ./client/Dockerfile ./client
-  - docker build -t mikecallari/multi-nginx -f ./nginx/Dockerfile ./nginx
-  - docker build -t mikecallari/multi-server -f ./server/Dockerfile ./server
-  - docker build -t mikecallari/multi-worker -f ./worker/Dockerfile ./worker
-  # Log in to docker CLI
-  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
-  # Push to docker hub.
-  - docker push mikecallari/multi-client
-  - docker push mikecallari/multi-nginx
-  - docker push mikecallari/multi-server
-  - docker push mikecallari/multi-worker
+  # - docker build -t mikecallari/multi-client -f ./client/Dockerfile ./client
+  # - docker build -t mikecallari/multi-nginx -f ./nginx/Dockerfile ./nginx
+  # - docker build -t mikecallari/multi-server -f ./server/Dockerfile ./server
+  # - docker build -t mikecallari/multi-worker -f ./worker/Dockerfile ./worker
+  # # Log in to docker CLI
+  # - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
+  # # Push to docker hub.
+  # - docker push mikecallari/multi-client
+  # - docker push mikecallari/multi-nginx
+  # - docker push mikecallari/multi-server
+  # - docker push mikecallari/multi-worker
+  # Log into AWS cli
+  - eval $(aws ecr get-login --region us-east-1)
+  # Build images
+  - docker build -t org/multi-client -f ./client/Dockerfile ./client
+  - docker build -t org/multi-nginx -f ./nginx/Dockerfile ./nginx
+  - docker build -t org/multi-server -f ./server/Dockerfile ./server
+  - docker build -t org/multi-worker -f ./worker/Dockerfile ./worker
+  # Push to ACS
+  - docker push 669386438505.dkr.ecr.us-east-1.amazonaws.com/org/multi-client
+  - docker push 669386438505.dkr.ecr.us-east-1.amazonaws.com/org/multi-nginx
+  - docker push 669386438505.dkr.ecr.us-east-1.amazonaws.com/org/multi-server
+  - docker push 669386438505.dkr.ecr.us-east-1.amazonaws.com/org/multi-worker
 
-deploy:
-  provider: elasticbeanstalk
-  region: us-east-1
-  app: multi-docker
-  env: MultiDocker-env
-  bucket_name: elasticbeanstalk-us-east-1-669386438505
-  bucket_path: docker-multi
-  on:
-    branch: master
-  access_key_id: $AWS_ACCESS_KEY
-  secret_access_key:
-    secure: $AWS_SECRET_KEY
+# deploy:
+#   provider: elasticbeanstalk
+#   region: us-east-1
+#   app: multi-docker
+#   env: MultiDocker-env
+#   bucket_name: elasticbeanstalk-us-east-1-669386438505
+#   bucket_path: docker-multi
+#   on:
+#     branch: master
+#   access_key_id: $AWS_ACCESS_KEY
+#   secret_access_key:
+#     secure: $AWS_SECRET_KEY
 
